@@ -56,14 +56,14 @@ source devel/setup.bash
 gedit ~/.bashrc  
 source /opt/ros/noetic/setup.bash  
 source /home/pl-ros/Documents/catkin_ws/devel/setup.bash  
-### 6.安装依赖的几个包
+### 7.安装依赖的几个包
 sudo apt-get install ros-noetic-trac-ik-kinematics-plugin  
 
 sudo apt-get install ros-noetic-effort-controllers  
 
 sudo apt-get install ros-noetic-joint-trajectory-controller  
 
-### 7.这时候可以执行测试了，打开3个终端，分别输入以下命令
+### 8.这时候可以执行测试了，打开3个终端，分别输入以下命令
 roslaunch ur_gazebo ur5_bringup.launch  
 
 roslaunch ur5_moveit_config moveit_planning_execution.launch sim:=true  
