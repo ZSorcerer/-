@@ -1,30 +1,30 @@
 Linux mint 20 x64 安装ROS
 
-##1.设置源
+###1.设置源###
 sudo sh -c '. /etc/lsb-release && echo "deb http://mirrors.ustc.edu.cn/ros/ubuntu/  focal main" > /etc/apt/sources.list.d/ros-latest.list'
 
 sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 
 
 
-##2.安装ROS noetic
+###2.安装ROS noetic###
 sudo apt update
 sudo apt install ros-noetic-desktop-full
 
 
-##3.添加环境变量
+###3.添加环境变量###
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc 
 source ~/.bashrc 
 
-##4.安装ros所需工具
+###4.安装ros所需工具###
 sudo apt install python3-rosinstall python3-rosinstall-generator python3-wstool build-essential python3-roslaunch
 
 
-##5.测试ROS是否安装成功，如果出现小乌龟代表安装成功：
+###5.测试ROS是否安装成功，如果出现小乌龟代表安装成功：###
 rosrun turtlesim turtlesim_node
 
 
 
-##-------------------------------------------、
+###-------------------------------------------、
 
 
 安装UR3-UR5支持
