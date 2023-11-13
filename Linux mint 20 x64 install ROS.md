@@ -52,6 +52,10 @@ catkin_make
 ### 5.编译完成后，进到编译后的目录，加载编译后的包
 source devel/setup.bash
 
+### 6.把这几句话添加到bashrc，一劳永逸，不用每次打开终端都输入同样的命令
+gedit ~/.bashrc  
+source /opt/ros/noetic/setup.bash  
+source /home/pl-ros/Documents/catkin_ws/devel/setup.bash  
 ### 6.安装依赖的几个包
 sudo apt-get install ros-noetic-trac-ik-kinematics-plugin  
 
