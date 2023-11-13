@@ -8,11 +8,13 @@ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31
 
 ### 2.安装ROS noetic
 sudo apt update
+
 sudo apt install ros-noetic-desktop-full
 
 
 ### 3.添加环境变量
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc 
+
 source ~/.bashrc 
 
 ### 4.安装ros所需工具
@@ -39,7 +41,9 @@ git clone --depth 1 --branch melodic-devel https://github.com/ros-industrial/uni
 
 ### 3.新建文件夹catkin_ws/src，把universal_robot文件夹拷贝到src目录下
 mkdir catkin_ws
+
 cd catkin_ws
+
 mkdir src
 
 ### 4.编译，如果编译不成功，记得先确认ROS有没有加载，只有成功加载ROS才能编译
@@ -50,10 +54,14 @@ source devel/setup.bash
 
 ### 6.安装依赖的几个包
 sudo apt-get install ros-noetic-trac-ik-kinematics-plugin
+
 sudo apt-get install ros-noetic-effort-controllers
+
 sudo apt-get install ros-noetic-joint-trajectory-controller
 
 ### 7.这时候可以执行测试了，打开3个终端，分别输入以下命令
 roslaunch ur_gazebo ur5_bringup.launch
+
 roslaunch ur5_moveit_config moveit_planning_execution.launch sim:=true
+
 roslaunch ur5_moveit_config moveit_rviz.launch
