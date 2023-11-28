@@ -37,49 +37,49 @@ export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
 
 以创建私有工作包为例，假设要创建的私有功能包名称是moveit_ws。  
 
-$ mkdir ~p ~/moveit_ws/src  
-$ cd ~/moveit_ws/src  
-$ catkin_init_workspace  
-$ cd ~/moveit_ws  
-$ catkin_make  
-$ source devel/setup.bash  
+mkdir ~p ~/moveit_ws/src  
+cd ~/moveit_ws/src  
+catkin_init_workspace  
+cd ~/moveit_ws  
+catkin_make  
+source devel/setup.bash  
 
 catkin_make成功后，把目录<universal_robot>/ur_description复制到~/moveit_ws/src，再重新catkin_make。  
 
 ### 3.xacro格式转换成urdf格式  
-$ cd ~/moveit_ws/src/ur_description/urdf  
-$ rosrun xacro xacro --inorder -o ur5.urdf ur5_joint_limited_robot.urdf.xacro  
+cd ~/moveit_ws/src/ur_description/urdf  
+rosrun xacro xacro --inorder -o ur5.urdf ur5_joint_limited_robot.urdf.xacro  
 
 转换成功后，可执行“urdf_to_graphiz ur5.urdf”生成ur5.pdf，打开pdf查看该模型整体结构。  
 
 ### 4.urdf格式转换成dae格式  
-$ rosrun collada_urdf urdf_to_collada ur5.urdf ur5.dae  
+rosrun collada_urdf urdf_to_collada ur5.urdf ur5.dae  
 
 ### 5.设置精度  
 (这一步设置的是模型的精度，用来识别DH参数。5足够了，但是我认为这里也有问题，实际模型的精度要参考官方的DH参数并且手动修改，因为某些关节的小数点后没有这么高精度，有些可能超过5位，需要参考官方的DH值进行修改:https://www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics/)  
 
-$ export IKFAST_PRECISION="5"  
-$ rosrun moveit_kinematics round_collada_numbers.py ur5.dae ur5.dae "$IKFAST_PRECISION"  
+export IKFAST_PRECISION="5"  
+rosrun moveit_kinematics round_collada_numbers.py ur5.dae ur5.dae "$IKFAST_PRECISION"  
 
 ### 6.查看关节数据  
 
-$ openrave-robot.py ur5.dae --info links  
+openrave-robot.py ur5.dae --info links  
 
 ### 7.查看三维模型。  
 这里能检查到dae文件的坐标系和UR机器人示教器上的base坐标系方向相反，除此之外姿态坐标也不一致，不能只简单的更改dae文件的base坐标。  
 
-$ openrave ur5.dae  
+openrave ur5.dae  
 
 ### 8.生成ikfast c++文件（这里生成的有问题，除了下面验证的一组，计算其它很多姿态都是错误的）:  
-$ sudo python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot=ur5.dae --iktype=transform6d --baselink=0 --eelink=9 --savefile=$(pwd)/ikfast61.cpp  
+sudo python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot=ur5.dae --iktype=transform6d --baselink=0 --eelink=9 --savefile=$(pwd)/ikfast61.cpp  
 
 这里可能会报错，提示from . import xxx错误，可能是新版的某个python包导致相对路径识别有问题，如果报错直接定位到ikfast.py的目录，修改这个文件，定位到错误行，把from . 删掉，直接import xxx就可以了。  
 如果解决了上面的问题，还有其它报错，说明openrave安装失败或者某些依赖包安装失败，如果不能手动修复，需要重装系统再次重新安装。  
 ### 9.使用ikfast61.cpp求逆解  
 (lapack也可以更换成并行版本的OpenBlas，但是我试过，速度没有明显提升，耗时主要在ikfast的迭代环节，这部分没有用并行实现)  
 
-$ cp /usr/local/lib/python2.7/dist-packages/openravepy/_openravepy_/ikfast.h .  
-$ g++ ikfast61.cpp -o ikfast -llapack -std=c++11  
+cp /usr/local/lib/python2.7/dist-packages/openravepy/_openravepy_/ikfast.h .  
+g++ ikfast61.cpp -o ikfast -llapack -std=c++11  
 
 注：  
 
@@ -94,22 +94,23 @@ r20  r21  r22  t3
 
 ### 10.生成 8 组解  
 
-$ ./ikfast 0.04071115 -0.99870914 0.03037599 0.4720009 -0.99874455 -0.04156303 -0.02796067 0.12648243 0.0291871 -0.02919955 -0.99914742 0.43451169  
+./ikfast 0.04071115 -0.99870914 0.03037599 0.4720009 -0.99874455 -0.04156303 -0.02796067 0.12648243 0.0291871 -0.02919955 -0.99914742 0.43451169  
 
 ### 11.用正向运动学方程进行验证  
 
 ### 12.生成moveit_ikfast_plugin功能包  
 
-$ cd ~/moveit_ws/src  
-$ export MOVEIT_IK_PLUGIN_PKG="moveit_ikfast_plugin"  
-$ catkin_create_pkg "$MOVEIT_IK_PLUGIN_PKG  
+cd ~/moveit_ws/src  
+export MOVEIT_IK_PLUGIN_PKG="moveit_ikfast_plugin"  
+catkin_create_pkg "$MOVEIT_IK_PLUGIN_PKG  
 
 上面语句的功能是在~/moveit_ws/src添加功能包moveit_ikfast_plugin。下面填充功能包内容，假设成功world-->ee_link的规划组叫“robot_arm”。  
-$ cd ~/moveit_ws/src/moveit_ikfast_plugin  
-$ export MYROBOT_NAME="ur5"  
-$ export PLANNING_GROUP="robot_arm"  
-$ export IKFAST_OUTPUT_PATH=~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
-$ rosrun moveit_kinematics create_ikfast_moveit_plugin.py "$MYROBOT_NAME" "$PLANNING_GROUP" "$MOVEIT_IK_PLUGIN_PKG" "world" "ee_link" "$IKFAST_OUTPUT_PATH"  
+
+cd ~/moveit_ws/src/moveit_ikfast_plugin  
+export MYROBOT_NAME="ur5"  
+export PLANNING_GROUP="robot_arm"  
+export IKFAST_OUTPUT_PATH=~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
+rosrun moveit_kinematics create_ikfast_moveit_plugin.py "$MYROBOT_NAME" "$PLANNING_GROUP" "$MOVEIT_IK_PLUGIN_PKG" "world" "ee_link" "$IKFAST_OUTPUT_PATH"  
 
 成功后，会在~/moveit_ws/src/moveit_ikfast_plugin/src生成两个文件。  
 
