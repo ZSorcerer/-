@@ -1,3 +1,4 @@
+# 一.安装较新的openrave 0.130.0  
 ### 1.首先安装ubuntu 20.04纯净版，不用更换源。  
 ### 2.安装clash。运行clash后进入Service mode，打开TUN Mode 和Mixin，确保clash能在终端中运行。   
 ### 3.在要开启代理的终端中输入下列命令来开启代理:  
@@ -54,7 +55,8 @@ $ rosrun xacro xacro --inorder -o ur5.urdf ur5_joint_limited_robot.urdf.xacro
 ### 4.urdf格式转换成dae格式  
 $ rosrun collada_urdf urdf_to_collada ur5.urdf ur5.dae  
 
-### 5.设置精度(这一步设置的是模型的精度，用来识别DH参数。5足够了，但是我认为这里也有问题，实际模型的精度要参考官方的DH参数并且手动修改，因为某些关节的小数点后没有这么高精度，有些可能超过5位，需要参考官方的DH值进行修改:https://www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics/)  
+### 5.设置精度  
+(这一步设置的是模型的精度，用来识别DH参数。5足够了，但是我认为这里也有问题，实际模型的精度要参考官方的DH参数并且手动修改，因为某些关节的小数点后没有这么高精度，有些可能超过5位，需要参考官方的DH值进行修改:https://www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics/)  
 
 $ export IKFAST_PRECISION="5"  
 $ rosrun moveit_kinematics round_collada_numbers.py ur5.dae ur5.dae "$IKFAST_PRECISION"  
@@ -63,7 +65,8 @@ $ rosrun moveit_kinematics round_collada_numbers.py ur5.dae ur5.dae "$IKFAST_PRE
 
 $ openrave-robot.py ur5.dae --info links  
 
-### 7.查看三维模型,这里能检查到dae文件的坐标系和UR机器人示教器上的base坐标系方向相反，除此之外姿态坐标也不一致，不能只简单的更改dae文件的base坐标。  
+### 7.查看三维模型。  
+这里能检查到dae文件的坐标系和UR机器人示教器上的base坐标系方向相反，除此之外姿态坐标也不一致，不能只简单的更改dae文件的base坐标。  
 
 $ openrave ur5.dae  
 
@@ -72,7 +75,8 @@ $ sudo python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py -
 
 这里可能会报错，提示from . import xxx错误，可能是新版的某个python包导致相对路径识别有问题，如果报错直接定位到ikfast.py的目录，修改这个文件，定位到错误行，把from . 删掉，直接import xxx就可以了。  
 如果解决了上面的问题，还有其它报错，说明openrave安装失败或者某些依赖包安装失败，如果不能手动修复，需要重装系统再次重新安装。  
-### 9.使用ikfast61.cpp求逆解(lapack也可以更换成并行版本的OpenBlas，但是我试过，速度没有明显提升，耗时主要在ikfast的迭代环节，这部分没有用并行实现)  
+### 9.使用ikfast61.cpp求逆解  
+(lapack也可以更换成并行版本的OpenBlas，但是我试过，速度没有明显提升，耗时主要在ikfast的迭代环节，这部分没有用并行实现)  
 
 $ cp /usr/local/lib/python2.7/dist-packages/openravepy/_openravepy_/ikfast.h .  
 $ g++ ikfast61.cpp -o ikfast -llapack -std=c++11  
@@ -83,7 +87,7 @@ IKFast 算法依赖于LAPACK（Linear Algebra PACKag）库，所以编译的时�
 输入为 3x4 矩阵（rotation 3x3， translation 3x1）  
 r00 r01 r02 t1 r10 r11 r12 t2 r20 r21 r22 t3  
 
-# 转换成 3x4 矩阵  
+转换成 3x4 矩阵：  
 r00  r01  r02  t1  
 r10  r11  r12  t2  
 r20  r21  r22  t3  
