@@ -38,7 +38,10 @@ export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
 ### 方案A.  
 （这里需要注意，以下步骤生成的urdf文件转换成的dae文件，坐标系方向和关节数目有问题，会导致生成的c++代码文件体积巨大，而且求出的逆解值错误，原因目前还没有时间去排查，可能跟collada的坐标转换有关，需要手动编写xml文件来解决。）  
 
-#### 1.下载UR5模型 universal_robot：https://github.com/ros-industrial/universal_robot。本文只用到当中<universal_robot>/ur_description目录，模型ur5_joint_limited_robot.urdf.xacro，注意，不能下载最新版，最新版目录中没有ur5_joint_limited_robot.urdf.xacro。最新版是ur5.xacro，模型是拆解的，会导致识别出的DH参数错误，需要找到有ur5_joint_limited_robot.urdf.xacro的旧版下载。  
+#### 1.下载UR5模型  
+universal_robot：https://github.com/ros-industrial/universal_robot。
+本文只用到当中<universal_robot>/ur_description/urdf 目录下的模型ur5_joint_limited_robot.urdf.xacro。
+注意，不能下载最新版，最新版目录中没有ur5_joint_limited_robot.urdf.xacro。最新版是ur5.xacro，模型是拆解的，会导致识别出的DH参数错误，需要找到有ur5_joint_limited_robot.urdf.xacro的旧版下载。  
 
 #### 2.基于ur_description，创建或加入私有功能包  
 
