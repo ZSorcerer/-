@@ -217,10 +217,10 @@ catkin_create_pkg "$MOVEIT_IK_PLUGIN_PKG
 ```
 上面语句的功能是在\~/moveit_ws/src 添加功能包moveit_ikfast_plugin。下面填充功能包内容，假设成功world-->ee_link的规划组叫“robot_arm”。  
 ```
-cd \~/moveit_ws/src/moveit_ikfast_plugin   
+cd ~/moveit_ws/src/moveit_ikfast_plugin   
 export MYROBOT_NAME="ur5"  
 export PLANNING_GROUP="robot_arm"  
-export IKFAST_OUTPUT_PATH=\~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
+export IKFAST_OUTPUT_PATH=~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
 rosrun moveit_kinematics create_ikfast_moveit_plugin.py "$MYROBOT_NAME" "$PLANNING_GROUP" "$MOVEIT_IK_PLUGIN_PKG" "world" "ee_link" "$IKFAST_OUTPUT_PATH"  
 ```
 成功后，会在\~/moveit_ws/src/moveit_ikfast_plugin/src 生成两个文件。  
@@ -266,7 +266,7 @@ python demo.py
 #### 9. 注意UR机器人默认DH参数和校准参数。  
 ikfast是按照UR机器人理论值的DH参数求出的解析形式的封闭解，需要每个旋转轴两两正交并且交于一点。但是UR机器人(其它协作机器人也同理)出厂的时候会校准DH参数，这会使得两个关节的旋转轴并不一定相交，两个旋转轴一定会有间距(机械安装也做不到正交的旋转轴完全交于一点)，这样做的目的是提高UR机器人的绝对定位精度，但是这会使得ikfast求出的逆解和UR机器人的姿态不一致，有些位置的坐标误差会有5\~8个mm，关节角的误差会有3\~5°。 如果要让ikfast的结果和UR机器人的姿态完全一致，目前没有完美的解决方案，目前折衷的办法是修改UR机器人示教器U盘中/root目录下的calibration.conf文件，把校准的DH参数的变化量全部设为0，这样就可以让UR机器人的姿态严格按照理论值进行计算。这样做不会影响重复定位精度，但是会影响绝对定位精度。对于遥操作来说只要重复定位精度高就行了，如果后续需要重新用到绝对定位精度，则需要还原出厂校准的calibration.conf文件的值。 因此，如果修改calibration.conf，需要提前做好备份。
 
-还有一种方法是使用数值解，目前数值解求解速度最快的是Track-ik, UR5机器人使用Track-ik求解时间差不多400~500微秒，而且Track-ik可以使用出厂校准后的DH参数进行数值求解：  
+还有一种方法是使用数值解，目前数值解求解速度最快的是Track-ik, UR5机器人使用Track-ik求解时间差不多400~500微秒，而且Track-ik可以使用出厂校准后的DH参数进行数值求解,从而让逆解值和机器人姿态完全一致：  
 ```
 rosrun xacro xacro -o calibrated.urdf ur5_robot.urdf.xacro kinematics_config:=/<YOUR_PATH>/calibration.yaml
 ```
