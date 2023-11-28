@@ -9,11 +9,12 @@ export all_proxy=socks5://127.0.0.1:7890
 ### 4.依次运行1,2,3,4,5_install_xxx.sh，等待安装完成。如果有哪个包安装失败，可以在cache-package目录下手动安装(注意，这里安装的是2023.sep.06的116fe9af5d5b8fe3196608ec93bc0dcc1a730fa1版本，这个版本是没有合并的一个分支，但是修正了和pybind 2.9不兼容的bug，不能安装最新版，最新版没有修正在pybind 2.9下 char* 和int不兼容的bug)。  
 
 ### 5.设置openrave的环境变量(否则会找不到OPENRAVE_PLUGINS),将以下命令添加到 ~/.bashrc文件末尾，然后保存:  
+```
 sudo apt-get install vim  
 sudo vim ~/.bashrc  
 export OPENRAVE_PLUGINS=/usr/local/lib/openrave0.130-plugins  
 export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH  
-
+```
 ### 6. 让环境变量生效:  
 source ~/.bashrc  
 
