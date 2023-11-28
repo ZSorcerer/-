@@ -106,7 +106,7 @@ catkin_create_pkg "$MOVEIT_IK_PLUGIN_PKG
 
 上面语句的功能是在~/moveit_ws/src添加功能包moveit_ikfast_plugin。下面填充功能包内容，假设成功world-->ee_link的规划组叫“robot_arm”。  
 
-cd ~/moveit_ws/src/moveit_ikfast_plugin  
+cd ~/moveit_ws/src/moveit_ikfast_plugin   
 export MYROBOT_NAME="ur5"  
 export PLANNING_GROUP="robot_arm"  
 export IKFAST_OUTPUT_PATH=~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
