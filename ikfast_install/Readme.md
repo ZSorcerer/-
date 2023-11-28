@@ -104,15 +104,15 @@ cd ~/moveit_ws/src
 export MOVEIT_IK_PLUGIN_PKG="moveit_ikfast_plugin"  
 catkin_create_pkg "$MOVEIT_IK_PLUGIN_PKG  
 
-上面语句的功能是在~/moveit_ws/src添加功能包moveit_ikfast_plugin。下面填充功能包内容，假设成功world-->ee_link的规划组叫“robot_arm”。  
+上面语句的功能是在\~/moveit_ws/src添加功能包moveit_ikfast_plugin。下面填充功能包内容，假设成功world-->ee_link的规划组叫“robot_arm”。  
 
-cd ~/moveit_ws/src/moveit_ikfast_plugin   
+cd \~/moveit_ws/src/moveit_ikfast_plugin   
 export MYROBOT_NAME="ur5"  
 export PLANNING_GROUP="robot_arm"  
-export IKFAST_OUTPUT_PATH=~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
+export IKFAST_OUTPUT_PATH=\~/moveit_ws/src/ur_description/urdf/ikfast61.cpp  
 rosrun moveit_kinematics create_ikfast_moveit_plugin.py "$MYROBOT_NAME" "$PLANNING_GROUP" "$MOVEIT_IK_PLUGIN_PKG" "world" "ee_link" "$IKFAST_OUTPUT_PATH"  
 
-成功后，会在~/moveit_ws/src/moveit_ikfast_plugin/src生成两个文件。  
+成功后，会在\~/moveit_ws/src/moveit_ikfast_plugin/src生成两个文件。  
 
 ur5_robot_arm_ikfast_moveit_plugin.cpp。创建一个可用在moveit的，针对“ur5”模型、“robot_arm”规划组，派生于KinematicsBase的运动学求解器。  
 ur5_robot_arm_ikfast_solver.cpp。它的内容就是ikfast61.cpp。  
