@@ -263,3 +263,9 @@ python demo.py
 #### 8.编译windows下的.lib文件。  
 需要首先安装intel iFortran 编译器，在windows下手动编译lapack和blas的静态库，然后使用上面的ikfast.h和ikfast.cpp 编译出ikfast.lib，就可以导入自己的程序调用函数了。  
 注意，编译的时候，iFortran的符号命名下划线需要在配置中修改，ikfast.cpp extern C这部分的下划线以及全文中同名部分的下划线也要去掉。还有一些#define的参数要修改，才能成功编译出ikfast.lib。  
+#### 9. 注意UR机器人默认DH参数和校准参数。  
+ikfast是按照UR机器人理论值的DH参数求出的解析形式的封闭解，需要每个旋转轴两两正交并且交于一点。但是UR机器人(其它协作机器人也同理)出厂的时候会校准DH参数，这会使得两个关节的旋转轴并不一定相交，两个旋转轴一定会有间距(机械安装也做不到正交的旋转轴完全交于一点)，这样做的目的是提高UR机器人的绝对定位精度，但是这会使得ikfast求出的逆解和UR机器人的姿态不一致，有些位置的坐标误差会有5~8个mm，关节角的误差会有3~5°。 如果要让ikfast的结果和UR机器人的姿态完全一致，目前没有完美的解决方案，目前折衷的办法是修改UR机器人示教器U盘中/root目录下的calibration.conf文件，把校准的DH参数的变化量全部设为0，这样就可以让UR机器人的姿态严格按照理论值进行计算。这样做不会影响重复定位精度，但是会影响绝对定位精度。对于遥操作来说只要重复定位精度高就行了，如果后续需要重新用到绝对定位精度，则需要还原出厂校准的calibration.conf文件的值。 因此，如果修改calibration.conf，需要提前做好备份。
+
+还有一种方法是使用数值解，目前数值解求解速度最快的是Track-ik, UR5机器人使用Track-ik求解时间差不多400~500微秒，而且Track-ik可以使用出厂校准后的DH参数进行数值求解(相关资料可以在[https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/issues/
+226](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/issues/
+226) 找到)，但是需要依赖ROS。
