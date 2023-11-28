@@ -68,7 +68,8 @@ rosrun xacro xacro --inorder -o ur5.urdf ur5_joint_limited_robot.urdf.xacro
 rosrun collada_urdf urdf_to_collada ur5.urdf ur5.dae  
 ```
 #### 5.设置精度  
-(这一步设置的是模型的精度，用来识别DH参数。5足够了，但是我认为这里也有问题，实际模型的精度要参考官方的DH参数并且手动修改，因为某些关节的小数点后没有这么高精度，有些可能超过5位，需要参考官方的DH值进行修改:https://www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics/)  
+(这一步设置的是模型的精度，用来识别DH参数。5足够了，但是我认为这里也有问题，实际模型的精度要参考官方的DH参数并且手动修改，因为某些关节的小数点后没有这么高精度，有些可能超过5位，需要参考官方的DH值进行修改:  
+https://www.universal-robots.com/articles/ur/application-installation/dh-parameters-for-calculations-of-kinematics-and-dynamics/)  
 ```
 export IKFAST_PRECISION="5"  
 rosrun moveit_kinematics round_collada_numbers.py ur5.dae ur5.dae "$IKFAST_PRECISION"  
