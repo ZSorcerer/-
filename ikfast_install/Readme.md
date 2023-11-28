@@ -118,7 +118,8 @@ ur5_robot_arm_ikfast_solver.cpp。它的内容就是ikfast61.cpp。
 执行catkin_make后，“rospack find moveit_ikfast_plugin”可得到moveit_ikfast_plugin功能包的有效路径。  
 
 ## 方案B.  
-### 1.克隆ikfastpy.git这个仓库，这个仓库是用手动编写的xml文件导入openrave进行DH参数的识别，经过验证，这个xml文件计算出来的正解和逆解均正确而且精度很高。这个xml文件简单清晰，可以方便手动修改。   
+### 1.使用ikfastpy项目  
+这个仓库是用手动编写的xml文件导入openrave进行DH参数的识别，经过验证，这个xml文件计算出来的正解和逆解均正确而且精度很高。这个xml文件简单清晰，可以方便手动修改。   
 git clone https://github.com/andyzeng/ikfastpy.git  
 
 ### 2.安装Cython  
@@ -131,7 +132,8 @@ sudo python setup.py build_ext --inplace
 ### 4.验证正解和逆解的结果  
 python demo.py  
 
-### 5.这个包用的是旧版的ikfast.cpp，是该作者自己生成的，我们可以用前面安装好的openrave 2023 sep.06版，生成较新的ikfast，正常情况下，5分钟左右就可以生成成功，生成的ikfast.cpp的大小在500kb附近，如果超过1MB，可能模型或者参数配置有问题，不仅生成慢(大概20分钟)，而且会导致逆解变慢以及计算错误：  
+### 5.重新生成ikfast.cpp  
+这个包用的是旧版的ikfast.cpp，是该作者自己生成的，我们可以用前面安装好的openrave 2023 sep.06版，生成较新的ikfast，正常情况下，5分钟左右就可以生成成功，生成的ikfast.cpp的大小在500kb附近，如果超过1MB，可能模型或者参数配置有问题，不仅生成慢(大概20分钟)，而且会导致逆解变慢以及计算错误：  
 python `openrave-config --python-dir`/openravepy/_openravepy_/ikfast.py --robot=ur5.robot.xml --iktype=transform6d --baselink=0 --eelink=6 --savefile=ikfast61.cpp --maxcasedepth 1  
 
 ### 6.把新版的ikfast.h拷贝到当前目录下:  
