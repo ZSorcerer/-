@@ -1,4 +1,4 @@
-# 一.安装较新的openrave 0.130.0  
+## 一.安装较新的openrave 0.130.0  
 #### 1.首先安装ubuntu 20.04纯净版，不用更换源。  
 #### 2.安装clash。运行clash后进入Service mode，打开TUN Mode 和Mixin，确保clash能在终端中运行。   
 #### 3.在要开启代理的终端中输入下列命令来开启代理:  
@@ -33,9 +33,9 @@ export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
 以root模式，用vscode或者sublime打开ikfast.py, 搜索tan(self.tvar)，然后修改为 tan(self.var)，这里多打了一个t。这个bug在几乎所有的版本都有，最新版修复了这个bug，但是没有和116fe9af5这个版本所修复的pybind 2.9下 char* 和int不兼容的bug进行合并。  
 
 
-# 二.用ur5模型生成c++逆运动学求解器源码  
+## 二.用ur5模型生成c++逆运动学求解器源码  
 
-## 方案A.  
+### 方案A.  
 （这里需要注意，以下步骤生成的urdf文件转换成的dae文件，坐标系方向和关节数目有问题，会导致生成的c++代码文件体积巨大，而且求出的逆解值错误，原因目前还没有时间去排查，可能跟collada的坐标转换有关，需要手动编写xml文件来解决。）  
 
 #### 1.下载UR5模型 universal_robot：https://github.com/ros-industrial/universal_robot。本文只用到当中<universal_robot>/ur_description目录，模型ur5_joint_limited_robot.urdf.xacro，注意，不能下载最新版，最新版目录中没有ur5_joint_limited_robot.urdf.xacro。最新版是ur5.xacro，模型是拆解的，会导致识别出的DH参数错误，需要找到有ur5_joint_limited_robot.urdf.xacro的旧版下载。  
@@ -129,7 +129,7 @@ rosrun moveit_kinematics create_ikfast_moveit_plugin.py "$MYROBOT_NAME" "$PLANNI
 2.ur5_robot_arm_ikfast_solver.cpp：它的内容就是ikfast61.cpp。  
 执行catkin_make后，“rospack find moveit_ikfast_plugin”可得到moveit_ikfast_plugin功能包的有效路径。  
 
-## 方案B.  
+### 方案B.  
 #### 1.使用ikfastpy项目  
 这个仓库是用手动编写的xml文件导入openrave进行DH参数的识别，经过验证，这个xml文件计算出来的正解和逆解均正确而且精度很高。这个xml文件简单清晰，可以方便手动修改。  
 ```
