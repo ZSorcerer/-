@@ -130,8 +130,8 @@ export IKFAST_OUTPUT_PATH=\~/moveit_ws/src/ur_description/urdf/ikfast61.cpp
 rosrun moveit_kinematics create_ikfast_moveit_plugin.py "$MYROBOT_NAME" "$PLANNING_GROUP" "$MOVEIT_IK_PLUGIN_PKG" "world" "ee_link" "$IKFAST_OUTPUT_PATH"  
 ```
 成功后，会在\~/moveit_ws/src/moveit_ikfast_plugin/src生成两个文件。  
-1.ur5_robot_arm_ikfast_moveit_plugin.cpp：创建一个可用在moveit的，针对“ur5”模型、“robot_arm”规划组，派生于KinematicsBase的运动学求解器。  
-2.ur5_robot_arm_ikfast_solver.cpp：它的内容就是ikfast61.cpp。  
+1. **_ur5_robot_arm_ikfast_moveit_plugin.cpp_**：创建一个可用在moveit的，针对“ur5”模型、“robot_arm”规划组，派生于KinematicsBase的运动学求解器。  
+2. **_ur5_robot_arm_ikfast_solver.cpp_**：它的内容就是ikfast61.cpp。  
 执行catkin_make后，“rospack find moveit_ikfast_plugin”可得到moveit_ikfast_plugin功能包的有效路径。  
 
 ### 方案B.  
