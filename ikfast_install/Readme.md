@@ -114,7 +114,99 @@ r20  r21  r22  t3
 ./ikfast 0.04071115 -0.99870914 0.03037599 0.4720009 -0.99874455 -0.04156303 -0.02796067 0.12648243 0.0291871 -0.02919955 -0.99914742 0.43451169  
 ```
 #### 11.用正向运动学方程进行验证  
+```
+#include <iostream>
+#include <chrono>
+#include <string>
+#include <Eigen/Dense> // For most core Eigen functionalities
 
+Eigen::Isometry3d chain_getSegment_pose(const Eigen::Vector3d& xyz, const Eigen::Vector3d& rpy, const Eigen::Vector3d& axis_tag_xyz, double angle)
+{
+	Eigen::AngleAxisd rollAngle(Eigen::AngleAxisd(rpy(0), Eigen::Vector3d::UnitX()));
+	Eigen::AngleAxisd pitchAngle(Eigen::AngleAxisd(rpy(1), Eigen::Vector3d::UnitY()));
+	Eigen::AngleAxisd yawAngle(Eigen::AngleAxisd(rpy(2), Eigen::Vector3d::UnitZ()));
+
+	Eigen::Isometry3d F_parent_jnt = Eigen::Isometry3d::Identity();
+	F_parent_jnt.rotate(yawAngle * pitchAngle * rollAngle);
+	Eigen::Vector3d _axis = F_parent_jnt.rotation() * axis_tag_xyz;
+	Eigen::Vector3d axis = _axis / _axis.norm();
+
+	Eigen::Isometry3d joint_pose = Eigen::Isometry3d::Identity();
+	joint_pose.rotate(Eigen::AngleAxisd(angle, axis));
+	joint_pose.pretranslate(xyz);
+
+	Eigen::Isometry3d f_tip = Eigen::Isometry3d::Identity();
+	f_tip.rotate(F_parent_jnt.rotation());
+
+	Eigen::Isometry3d result = joint_pose * f_tip;
+	return result;
+}
+
+void verify_ur5()
+{
+	Eigen::Isometry3d result;
+	//double angle0[6] = { -2.508279331875612, -3.013057342196758, 1.224580428339185, 1.736242820305415, 0.593205998702227, 0.072539035191919 };
+	double angle0[6] = { 0,0,0,0,0,0 };
+	std::vector<double*> angles;
+	angles.push_back(angle0);
+	int at = 0;
+	for (std::vector<double*>::const_iterator it = angles.begin(); it != angles.end(); ++it, at++) {
+		double* angle = *it;
+		result = Eigen::Isometry3d::Identity();
+		// SDL_Log("Joint: shoulder_pan_joint");
+		Eigen::Vector3d rpy = Eigen::Vector3d(0.0, 0.0, 0.0);
+		Eigen::Vector3d xyz = Eigen::Vector3d(0.0, 0.0, 0.089159);
+		Eigen::Vector3d axis_tag_xyz = Eigen::Vector3d(0, 0, 1);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, angle[0]);
+		// SDL_Log("Joint: shoulder_lift_joint");
+		rpy = Eigen::Vector3d(0.0, 1.5707963267948966, 0.0);
+		xyz = Eigen::Vector3d(0.0, 0.13585, 0.0);
+		axis_tag_xyz = Eigen::Vector3d(0, 1, 0);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, angle[1]);
+		// SDL_Log("Joint: elbow_joint");
+		rpy = Eigen::Vector3d(0.0, 0.0, 0.0);
+		xyz = Eigen::Vector3d(0.0, -0.1197, 0.425);
+		axis_tag_xyz = Eigen::Vector3d(0, 1, 0);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, angle[2]);
+		// SDL_Log("Joint: wrist_1_joint");
+		rpy = Eigen::Vector3d(0.0, 1.5707963267948966, 0.0);
+		xyz = Eigen::Vector3d(0.0, 0.0, 0.39225);
+		axis_tag_xyz = Eigen::Vector3d(0, 1, 0);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, angle[3]);
+		// SDL_Log("Joint: wrist_2_joint");
+		rpy = Eigen::Vector3d(0.0, 0.0, 0.0);
+		xyz = Eigen::Vector3d(0.0, 0.093, 0.0);
+		axis_tag_xyz = Eigen::Vector3d(0, 0, 1);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, angle[4]);
+		// SDL_Log("Joint: wrist_3_joint");
+		rpy = Eigen::Vector3d(0.0, 0.0, 0.0);
+		xyz = Eigen::Vector3d(0.0, 0.0, 0.09465);
+		axis_tag_xyz = Eigen::Vector3d(0, 1, 0);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, angle[5]);
+		// SDL_Log("Joint: ee_fixed_joint");
+		rpy = Eigen::Vector3d(0.0, 0.0, 1.5707963267948966);
+		xyz = Eigen::Vector3d(0.0, 0.0823, 0.0);
+		axis_tag_xyz = Eigen::Vector3d(0, 0, 1);
+		result = result * chain_getSegment_pose(xyz, rpy, axis_tag_xyz, 0);
+
+		std::stringstream ss;
+		ss << "total result's matrix = \n";
+		ss << result.matrix();
+		printf("%s", ss.str().c_str());
+	}
+}
+
+
+
+
+
+
+int main()
+{
+	verify_ur5();
+    return 0;
+}
+```
 #### 12.生成moveit_ikfast_plugin功能包  
 ```
 cd ~/moveit_ws/src  
