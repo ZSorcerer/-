@@ -46,9 +46,7 @@ make -j8
 make tests
 ```
 
-11.
-
-NOTE: setup.py 第一行改为
+11. NOTE: setup.py 第一行改为
 ```
 "#!/usr/bin/python3" （此地址可以通过which python3来确定)
 ```
@@ -64,8 +62,7 @@ sudo ./setup.py install
 cat -v setup.py | sed -e '1,$s/\^M$//g' > setup.py
 ```
 ```
-12.
-python3 -c "import pymesh; pymesh.test()"
+12. python3 -c "import pymesh; pymesh.test()"
 ```
 
 执行上面这句话可能会报错，由于使用了已弃用的 np.float 引发了多个错误。为了修复这些错误，需要将所有使用 np.float 的地方替换为 np.float64。
